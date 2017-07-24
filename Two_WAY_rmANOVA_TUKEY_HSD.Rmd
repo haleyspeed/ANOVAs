@@ -8,7 +8,7 @@ output: html_notebook
 # print user details
 author <- "Haley E. Speed, Ph.D."
 analysisDate <- date()
-project <- "Gulf War"
+project <- "Example"
 info <- data.frame(Author = author, Date = analysisDate, Project = project)
 print(info)
 
