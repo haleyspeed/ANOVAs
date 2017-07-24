@@ -19,7 +19,7 @@ print(info)
 ```{r}
 # Import data into a dataframe
 
-fvData <- read.csv("C:\\Users\\hspeed\\Dropbox\\Sync Data Analysis Computers\\Gulf War Project\\Statistics\\fv_oil_saline_cpf_saline.csv")
+fvData <- read.csv("fv_oil_saline_cpf_saline.csv")
 
 
 ```
