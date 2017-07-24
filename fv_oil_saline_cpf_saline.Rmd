@@ -1,0 +1,162 @@
+---
+title: "I/O Curve FV 2-Way rmANOVA"
+output: html_notebook
+---
+
+```{r}
+
+# print user details
+author <- "Haley E. Speed, Ph.D."
+analysisDate <- date()
+project <- "Gulf War"
+info <- data.frame(Author = author, Date = analysisDate, Project = project)
+print(info)
+
+```
+
+
+
+```{r}
+# Import data into a dataframe
+
+fvData <- read.csv("C:\\Users\\hspeed\\Dropbox\\Sync Data Analysis Computers\\Gulf War Project\\Statistics\\fv_oil_saline_cpf_saline.csv")
+
+
+```
+
+<!--<hr><h2>Means for each slice</h2><hr> -->
+
+
+```{r}
+# Extract condition means from raw data (i.e. the 5 reps at each intensity) 
+# You can skip this step if you have already done it in excel)
+#fvMeans <- aggregate(fvData$fv1, by = list(fvData$slices1, 
+#fvData$group1, #fvData$Intensity),FUN = mean)
+
+# Give names to the columns of the fvMeans dataframe
+#colnames(fvMeans) <- c("Group","Slice","Intensity", "FV") 
+
+# Reorder the table according to sliceID
+#fvMeans <- fvMeans[order(fvMeans$Slice), ] 
+
+# print the first 8 rows of the indexed data to make sure everything looks right
+#print(fvMeans)
+
+
+```
+
+<hr><h2>Oil + Saline vs CPF + Saline </h2><hr>
+<br>
+<b>Descriptive Statistics</b>
+
+```{r}
+# Get group means, se, and n
+library(knitr)
+
+# Get sample sizes
+os_n <- tapply(fvData$OIL_SALINE, fvData$os_intensity, length)
+cs_n <- tapply(fvData$CPF_SALINE, fvData$cs_intensity, length)
+os_n <- os_n[[2]]
+cs_n <- cs_n[[2]]
+
+print_n <- matrix(c("Oil + Saline", "CPF + Saline", os_n, cs_n), nrow = 2, ncol = 2)
+colnames(print_n) <- (c("Group", "n"))
+
+# Get mean
+os_mean <- tapply(fvData$os_fv, fvData$os_intensity, mean)
+cs_mean <- tapply(fvData$cs_fv, fvData$cs_intensity, mean)
+os_mean_0 <- os_mean[[2]]
+cs_mean_0 <- cs_mean[[2]]
+os_mean_50 <- os_mean[[3]]
+cs_mean_50 <- cs_mean[[3]]
+os_mean_100 <- os_mean[[4]]
+cs_mean_100 <- cs_mean[[4]]
+os_mean_150 <- os_mean[[5]]
+cs_mean_150 <- cs_mean[[5]]
+os_mean_200 <- os_mean[[6]]
+cs_mean_200 <- cs_mean[[6]]
+os_mean_250 <- os_mean[[7]]
+cs_mean_250 <- cs_mean[[7]]
+os_mean_300 <- os_mean[[8]]
+cs_mean_300 <- cs_mean[[8]]
+os_mean_350 <- os_mean[[9]]
+cs_mean_350 <- cs_mean[[9]]
+
+# Get SD
+os_sd <- tapply(fvData$os_fv, fvData$os_intensity, sd)
+cs_sd <- tapply(fvData$cs_fv, fvData$cs_intensity, sd)
+
+# Get SE
+os_se_0 <- os_sd[[2]]/sqrt(os_n)
+cs_se_0 <- cs_sd[[2]]/sqrt(cs_n)
+os_se_50 <- os_sd[[3]]/sqrt(os_n)
+cs_se_50 <- cs_sd[[3]]/sqrt(cs_n)
+os_se_100 <- os_sd[[4]]/sqrt(os_n)
+cs_se_100 <- cs_sd[[4]]/sqrt(cs_n)
+os_se_150 <- os_sd[[5]]/sqrt(os_n)
+cs_se_150 <- cs_sd[[5]]/sqrt(cs_n)
+os_se_200 <- os_sd[[6]]/sqrt(os_n)
+cs_se_200 <- cs_sd[[6]]/sqrt(cs_n)
+os_se_250 <- os_sd[[7]]/sqrt(os_n)
+cs_se_250 <- cs_sd[[7]]/sqrt(cs_n)
+os_se_300 <- os_sd[[8]]/sqrt(os_n)
+cs_se_300 <- cs_sd[[8]]/sqrt(cs_n)
+os_se_350 <- os_sd[[9]]/sqrt(os_n)
+cs_se_350 <- cs_sd[[9]]/sqrt(cs_n)
+
+
+# Assemble easy-to-read table
+descriptive <- matrix(c("0 uA","50 uA","100 uA","150 uA","200 uA",
+                         "250 uA","300 uA","350 uA", os_mean_0, os_mean_50, 
+                         os_mean_100, os_mean_150, os_mean_200, os_mean_250, 
+                         os_mean_300, os_mean_350, os_se_0, os_se_50, os_se_100, 
+                         os_se_150, os_se_200, os_se_250, os_se_300, os_se_350, 
+                         cs_mean_0, cs_mean_50, cs_mean_100, cs_mean_150, 
+                         cs_mean_200, cs_mean_250, cs_mean_300, cs_mean_350, 
+                         cs_se_0, cs_se_50, cs_se_100, cs_se_150, cs_se_200, 
+                         cs_se_250, cs_se_300, cs_se_350), nrow = 8, ncol = 5)
+                       
+colnames(descriptive) <- c("Intensity", "Oil + Saline Mean", "SE", "CPF + Saline Mean", "SE")
+
+# Print results table without quotation marks
+
+print (kable(as.data.frame(print_n), digits = 2))
+print (kable(as.data.frame(descriptive), digits = 2))
+
+
+```
+
+
+<br>
+<b>ANOVA With Between-Subjects Effects</b>
+
+```{r}
+
+# FV = numeric value of the fv
+# ~ indicates relationship of fv to the independent variables
+# Group = Within subjects (differences affecting how the slice responds to the stimulus)
+# Intensity = between subjections (has no effect on how the slice responds to stimulus, only the fv)
+# Slice/Group = the within effects error
+library(nlme)
+lme_fv = lme(FV ~ Intensity * Group, data=fvData, random = ~1|Slice)
+anova(lme_fv)
+
+fvData$groupXintensity <- interaction(fvData$Group, fvData$Intensity)
+model = lme(FV ~ groupXintensity, data=fvData, random = ~1|Slice)
+
+
+```
+
+
+
+<br>
+<b>Tukey HSD posthoc analysis</b>
+
+```{r}
+
+require(multcomp)
+table1 <- summary(glht(model, linfct=mcp(groupXintensity="Tukey")), test = adjusted(type = "bonferroni"))
+print(table1)
+
+```
+

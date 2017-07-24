@@ -1,0 +1,224 @@
+---
+title: "mEPSC One-Way ANOVA - Amplitude"
+output: html_notebook
+---
+```{r set-options, echo=FALSE, cache=FALSE}
+library(knitr)
+
+```
+
+Author: Haley E. Speed, Ph.D
+Date: 07-10-17
+Project: Gulf War
+
+<hr>
+<h2>Group Definitions </h2>
+<hr>
+<li>Group1 = Oil + Saline vs Oil + IGF-1
+<li>Group2 = Oil + Saline vs CPF + Saline
+<li>Group3 = Oil + Saline vs CPF + IGF-1
+<li>Group4 = Oil + IGF-1 vs CPF + Saline
+<li>Group5 = Oil + IGF-1 vs CPF + IGF-1
+<li>Group6 = CPF + Saline vs. CPF + IGF-1
+<br>
+
+
+```{r}
+#Load in the data from a CSV file
+#Each column in the file should contain the average values for each bin
+
+amp <- read.csv("C:\\Users\\hspeed\\Dropbox\\Sync Data Analysis Computers\\Gulf War Project\\Statistics\\mEPSC_anova.csv")
+
+```
+<br>
+<hr>
+<h2>Descriptive Statistics</h2>
+<hr>
+
+
+```{r}
+# Remove "NA" from data
+
+os_amp <- amp$os_amp[!is.na(as.numeric(amp$os_amp))]
+oi_amp <- amp$oi_amp[!is.na(as.numeric(amp$oi_amp))]
+cs_amp <- amp$cs_amp[!is.na(as.numeric(amp$cs_amp))]
+ci_amp <- amp$ci_amp[!is.na(as.numeric(amp$ci_amp))]
+
+# Get sample size
+os_n <- length(os_amp)
+oi_n <- length(oi_amp)
+cs_n <- length(cs_amp)
+ci_n <- length(ci_amp)
+
+# Get mean
+os_mean <- mean(as.numeric(os_amp))
+oi_mean <- mean(as.numeric(oi_amp))
+cs_mean <- mean(as.numeric(cs_amp))
+ci_mean <- mean(as.numeric(ci_amp))
+
+# Get SD
+os_SD <- sd(as.numeric(os_amp)) 
+oi_SD <- sd(as.numeric(oi_amp))
+cs_SD <- sd(as.numeric(cs_amp))
+ci_SD <- sd(as.numeric(ci_amp))
+
+# Get SE
+os_SE <- os_SD/sqrt(os_n)
+oi_SE <- oi_SD/sqrt(oi_n)
+cs_SE <- cs_SD/sqrt(cs_n)
+ci_SE <- ci_SD/sqrt(ci_n)
+
+# Assemble easy-to-read table
+desc_stats <- matrix(c("Oil + Saline", "Oil + IGF-1", "CPF + Saline", "CPF + IGF-1", os_mean, oi_mean, cs_mean, ci_mean, os_SE, oi_SE, cs_SE, ci_SE, os_n, oi_n, cs_n, ci_n),nrow = 4, ncol = 4)
+colnames(desc_stats) <- c("Group", "Mean", "SE", "n")
+
+# Print results table without quotation marks
+print (kable(as.data.frame(desc_stats), digits = 2))
+
+
+```
+
+
+<br>
+<hr>
+<h2>One-Way ANOVA on total mEPSC Amplitude for each pair of groups</h2>
+<hr>
+
+
+<b>For Oil+Saline vs Oil+IGF-1:</b>
+
+```{r}
+
+# 1. Fit the model first (One Way ANOVA, Completely Randomized Design)
+# 2. diagnostic plots
+# 3. If data fit a normal distribution (Q-Q), evaluate the model effects
+
+fit1 <-aov(amp1 ~ groups1, data = amp)  # Analysis of Variance
+table1 <-summary(fit1)                  # Gives summary information from fit 3 (df, F, sum, p)
+table2 <- drop1(fit1,~.,test="F")       # drops redundant information from fit 3
+print(table1)                           # The info we will use for reporting
+
+```
+<br>
+<br>
+<b>For Oil+Saline vs CPF+Saline:</b>
+
+```{r}
+
+fit2 <-aov(amp2 ~ groups2, data = amp)  # Analysis of Variance
+table3 <-summary(fit2)                  # Gives summary information from fit 3 (df, F, sum, p)
+table4 <- drop1(fit2,~.,test="F")       # drops redundant information from fit 3
+print(table3)                           # The info we will use for reporting
+
+```
+
+<br>
+<br>
+<b>For Oil+Saline vs CPF+IGF-1:</b>
+
+```{r}
+
+fit3 <-aov(amp3 ~ groups3, data = amp)  # Analysis of Variance
+table5 <-summary(fit3)                  # Gives summary information from fit 3 (df, F, sum, p)
+table6 <- drop1(fit3,~.,test="F")       # drops redundant information from fit 3
+print(table5)                           # The info we will use for reporting
+
+
+```
+
+<br>
+<br>
+<b>For Oil+IGF-1 vs CPF+Saline:</b>
+
+```{r}
+
+fit4 <-aov(amp4 ~ groups4, data = amp)  # Analysis of Variance
+table7 <-summary(fit4)                  # Gives summary information from fit 3 (df, F, sum, p)
+table8 <- drop1(fit4,~.,test="F")       # drops redundant information from fit 3
+print(table7)                           # The info we will use for reporting
+
+
+```
+
+
+<br>
+<br>
+<b>For Oil+IGF-1 vs CPF+IGF-1:</b>
+
+```{r}
+
+fit5 <-aov(amp5 ~ groups5, data = amp)  # Analysis of Variance
+table9 <-summary(fit5)                  # Gives summary information from fit 3 (df, F, sum, p)
+table10 <- drop1(fit5,~.,test="F")      # drops redundant information from fit 3
+print(table9)                           # The info we will use for reporting
+
+
+```
+
+
+<br>
+<br>
+<b>For CPF+Saline vs CPF+IGF-1:</b>
+
+```{r}
+
+fit6 <-aov(amp6 ~ groups6, data = amp)  # Analysis of Variance
+table11 <-summary(fit6)                 # Gives summary information from fit 3 (df, F, sum, p)
+table12 <- drop1(fit6,~.,test="F")      # drops redundant information from fit 3
+print(table11)                          # The info we will use for reporting
+
+
+```
+
+
+<hr>
+<h2>Plots for One-Way ANOVAs</h2>
+<hr>
+
+<b>For Oil+Saline vs Oil+IGF-1:</b>
+```{r}
+
+plot(fit1) 
+
+```
+
+<br>
+<br>
+<b>For Oil+Saline vs CPF+Saline:</b>
+
+```{r}
+
+plot(fit2)
+
+```
+<br>
+<br>
+<b>For Oil+Saline vs CPF+IGF-1:</b>
+```{r}
+plot(fit3)
+
+```
+<br>
+<br>
+<b>For Oil+IGF-1 vs CPF+Saline:</b>
+
+```{r}
+plot(fit4)
+
+```
+
+<br>
+<br>
+<b>For Oil+IGF-1 vs CPF+IGF-1:</b>
+```{r}
+plot(fit5)
+
+```
+<br>
+<br>
+<b>For CPF+Saline vs CPF+IGF-1:</b>
+```{r}
+
+plot(fit6)
+```
+
