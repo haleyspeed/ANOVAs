@@ -9,7 +9,7 @@ library(knitr)
 
 Author: Haley E. Speed, Ph.D
 Date: 07-10-17
-Project: Gulf War
+Project: example
 
 <hr>
 <h2>Group Definitions </h2>
@@ -27,7 +27,7 @@ Project: Gulf War
 #Load in the data from a CSV file
 #Each column in the file should contain the average values for each bin
 
-amp <- read.csv("C:\\Users\\hspeed\\Dropbox\\Sync Data Analysis Computers\\Gulf War Project\\Statistics\\mEPSC_anova.csv")
+amp <- read.csv("mEPSC_anova.csv")
 
 ```
 <br>
@@ -99,76 +99,6 @@ table2 <- drop1(fit1,~.,test="F")       # drops redundant information from fit 3
 print(table1)                           # The info we will use for reporting
 
 ```
-<br>
-<br>
-<b>For Oil+Saline vs CPF+Saline:</b>
-
-```{r}
-
-fit2 <-aov(amp2 ~ groups2, data = amp)  # Analysis of Variance
-table3 <-summary(fit2)                  # Gives summary information from fit 3 (df, F, sum, p)
-table4 <- drop1(fit2,~.,test="F")       # drops redundant information from fit 3
-print(table3)                           # The info we will use for reporting
-
-```
-
-<br>
-<br>
-<b>For Oil+Saline vs CPF+IGF-1:</b>
-
-```{r}
-
-fit3 <-aov(amp3 ~ groups3, data = amp)  # Analysis of Variance
-table5 <-summary(fit3)                  # Gives summary information from fit 3 (df, F, sum, p)
-table6 <- drop1(fit3,~.,test="F")       # drops redundant information from fit 3
-print(table5)                           # The info we will use for reporting
-
-
-```
-
-<br>
-<br>
-<b>For Oil+IGF-1 vs CPF+Saline:</b>
-
-```{r}
-
-fit4 <-aov(amp4 ~ groups4, data = amp)  # Analysis of Variance
-table7 <-summary(fit4)                  # Gives summary information from fit 3 (df, F, sum, p)
-table8 <- drop1(fit4,~.,test="F")       # drops redundant information from fit 3
-print(table7)                           # The info we will use for reporting
-
-
-```
-
-
-<br>
-<br>
-<b>For Oil+IGF-1 vs CPF+IGF-1:</b>
-
-```{r}
-
-fit5 <-aov(amp5 ~ groups5, data = amp)  # Analysis of Variance
-table9 <-summary(fit5)                  # Gives summary information from fit 3 (df, F, sum, p)
-table10 <- drop1(fit5,~.,test="F")      # drops redundant information from fit 3
-print(table9)                           # The info we will use for reporting
-
-
-```
-
-
-<br>
-<br>
-<b>For CPF+Saline vs CPF+IGF-1:</b>
-
-```{r}
-
-fit6 <-aov(amp6 ~ groups6, data = amp)  # Analysis of Variance
-table11 <-summary(fit6)                 # Gives summary information from fit 3 (df, F, sum, p)
-table12 <- drop1(fit6,~.,test="F")      # drops redundant information from fit 3
-print(table11)                          # The info we will use for reporting
-
-
-```
 
 
 <hr>
@@ -182,43 +112,4 @@ plot(fit1)
 
 ```
 
-<br>
-<br>
-<b>For Oil+Saline vs CPF+Saline:</b>
-
-```{r}
-
-plot(fit2)
-
-```
-<br>
-<br>
-<b>For Oil+Saline vs CPF+IGF-1:</b>
-```{r}
-plot(fit3)
-
-```
-<br>
-<br>
-<b>For Oil+IGF-1 vs CPF+Saline:</b>
-
-```{r}
-plot(fit4)
-
-```
-
-<br>
-<br>
-<b>For Oil+IGF-1 vs CPF+IGF-1:</b>
-```{r}
-plot(fit5)
-
-```
-<br>
-<br>
-<b>For CPF+Saline vs CPF+IGF-1:</b>
-```{r}
-
-plot(fit6)
-```
 
